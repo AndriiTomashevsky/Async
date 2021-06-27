@@ -63,14 +63,21 @@ namespace FaviconBrowser
 
         private void LookupHostName()
         {
-            object unrelatedObject = "hello";
-            Dns.BeginGetHostAddresses("oreilly.com", OnHostNameResolved, unrelatedObject);
+            int aUsefulVariable = 3;
+
+            GetHostAddress("oreilly.com", address =>
+            {
+                // Do something with address and aUsefulVariable
+            });
         }
 
-        private void OnHostNameResolved(IAsyncResult ar)
+        private void GetHostAddress(string hostName, Action<IPAddress> callback)
         {
-            object unrelatedObject = ar.AsyncState;
-            IPAddress[] addresses = Dns.EndGetHostAddresses(ar);
+            throw new NotImplementedException();
+        }
+
+        private void OnHostNameResolved(IPAddress ar)
+        {
             // Do something with addresses
         }
 
