@@ -34,23 +34,23 @@ namespace FaviconBrowser
 
         private async void GetButton_OnClick(object sender, RoutedEventArgs e)
         {
-			// Alex shows the dialog window with Show() function instead of ShowDialog() to avoid modality -
-			// compare with GetUserPermissionModal().
+            // Alex shows the dialog window with Show() function instead of ShowDialog() to avoid modality -
+            // compare with GetUserPermissionModal().
             if (await GetUserPermission()) // (GetUserPermissionModal())
             {
                 // This loop has an obvios flow - it fires async function AddAFavicon with the completion logic inside.
-				// As a result the completions execute in the UI tread depending of the icon download speed rather than original icon order.
-				foreach (string domain in s_Domains)
+                // As a result the completions execute in the UI tread depending of the icon download speed rather than original icon order.
+                foreach (string domain in s_Domains)
                 {
                     AddAFavicon(domain);
                 }
             }
         }
 
-        private async void AddAFavicon(string domain)
+        private void AddAFavicon(string domain)
         {
             WebClient webClient = new WebClient();
-            byte[] bytes = await webClient.DownloadDataTaskAsync("http://" + domain + "/favicon.ico");
+            byte[] bytes = webClient.DownloadData("http://" + domain + "/favicon.ico");
             Image imageControl = MakeImageControl(bytes);
             m_WrapPanel.Children.Add(imageControl);
         }
@@ -71,19 +71,19 @@ namespace FaviconBrowser
             return tcs.Task;
         }
 
-		private bool GetUserPermissionModal()
-		{
-			PermissionDialog dialog = new PermissionDialog();
-			dialog.ShowDialog();
-			if (dialog.DialogResult.HasValue)
-			{
-				return dialog.DialogResult.Value;
-			}
-			else
-			{
-				return false;
-			}
-		}
+        private bool GetUserPermissionModal()
+        {
+            PermissionDialog dialog = new PermissionDialog();
+            dialog.ShowDialog();
+            if (dialog.DialogResult.HasValue)
+            {
+                return dialog.DialogResult.Value;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         private static Image MakeImageControl(byte[] bytes)
         {
