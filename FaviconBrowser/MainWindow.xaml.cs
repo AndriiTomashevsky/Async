@@ -55,19 +55,20 @@ namespace FaviconBrowser
             webClient.DownloadDataAsync(new Uri("http://" + domain + "/favicon.ico"));
         }
 
-        private void OnDownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+        private void OnDownloadDataCompleted(object sender, DownloadDataCompletedEventArgs args)
         {
-            Image imageControl = MakeImageControl(e.Result);
+            Image imageControl = MakeImageControl(args.Result);
             m_WrapPanel.Children.Add(imageControl);
         }
 
         private void LookupHostName()
         {
-            int aUsefulVariable = 3;
+            Task<IPAddress[]> ipAddressesPromise = Dns.GetHostAddressesAsync("oreilly.com");
 
-            GetHostAddress("oreilly.com", address =>
+            ipAddressesPromise.ContinueWith(task =>
             {
-                // Do something with address and aUsefulVariable
+                IPAddress[] iPAddresses = ipAddressesPromise.Result;
+                // Do something with addresses
             });
         }
 
