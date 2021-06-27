@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -50,9 +51,27 @@ namespace FaviconBrowser
         private void AddAFavicon(string domain)
         {
             WebClient webClient = new WebClient();
-            byte[] bytes = webClient.DownloadData("http://" + domain + "/favicon.ico");
-            Image imageControl = MakeImageControl(bytes);
+            webClient.DownloadDataCompleted += OnDownloadDataCompleted;
+            webClient.DownloadDataAsync(new Uri("http://" + domain + "/favicon.ico"));
+        }
+
+        private void OnDownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+        {
+            Image imageControl = MakeImageControl(e.Result);
             m_WrapPanel.Children.Add(imageControl);
+        }
+
+        private void LookupHostName()
+        {
+            object unrelatedObject = "hello";
+            Dns.BeginGetHostAddresses("oreilly.com", OnHostNameResolved, unrelatedObject);
+        }
+
+        private void OnHostNameResolved(IAsyncResult ar)
+        {
+            object unrelatedObject = ar.AsyncState;
+            IPAddress[] addresses = Dns.EndGetHostAddresses(ar);
+            // Do something with addresses
         }
 
         private Task<bool> GetUserPermission()
