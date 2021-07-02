@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,17 +49,13 @@ namespace FaviconBrowser
             }
         }
 
-        private void AddAFavicon(string domain)
+        private async void AddAFavicon(string domain)
         {
             WebClient webClient = new WebClient();
-            webClient.DownloadDataCompleted += OnDownloadDataCompleted;
-            webClient.DownloadDataAsync(new Uri("http://" + domain + "/favicon.ico"));
-        }
-
-        private void OnDownloadDataCompleted(object sender, DownloadDataCompletedEventArgs args)
-        {
-            Image imageControl = MakeImageControl(args.Result);
+            byte[] icon = await webClient.DownloadDataTaskAsync("http://" + domain + "/favicon.ico");
+            Image imageControl = MakeImageControl(icon);
             m_WrapPanel.Children.Add(imageControl);
+
         }
 
         private void LookupHostName()
